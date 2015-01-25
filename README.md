@@ -5,8 +5,4 @@ BTK STHUD Tags
 
 
 ### Description ###
-Shows the name of the player's cursor target right above the STHUD. (Group members only)
-
-
-### Controls ###
-None
+Unit nametags for the ShackTac Fireteam HUD (STHUD).
