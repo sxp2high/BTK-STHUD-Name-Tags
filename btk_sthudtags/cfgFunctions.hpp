@@ -1,16 +1,16 @@
-class btk_sthudtags {
+class btk_sthudnametags {
 
-	tag = "BTK_sthudtags";
+	tag = "BTK_sthudnametags";
 
 	class Init {
 
-		class init { file = "btk_sthudtags\init.sqf"; postInit = 1; };
+		class init { file = "btk_sthudnametags\init.sqf"; postInit = 1; };
 
 	};
 
 	class Misc {
 
-		file = "btk_sthudtags\functions";
+		file = "btk_sthudnametags\functions";
 
 		class showText {};
 

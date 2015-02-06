@@ -3,9 +3,6 @@
 */
 
 
-private ["_path"];
-
-
 // Wait for player
 waitUntil {(isDedicated) || !(isNull player)};
 
@@ -15,28 +12,39 @@ if (isDedicated) exitWith {};
 
 
 // Userconfig
-_path = if (isClass (configFile >> "CfgPatches" >> "btk_sthudtags")) then { "\userconfig\btk_sthudtags\config.hpp"; } else { "btk_sthudtags\config.hpp"; };
-[] call (compile (preprocessFileLineNumbers _path));
+[] call (compile (preprocessFileLineNumbers "\userconfig\btk\btk_sthudnametags.hpp"));
+
+
+// Userconfig not found
+if (isNil "btk_sthudnametags_enabled") then {
+	[] call (compile (preprocessFileLineNumbers "btk_sthudnametags\btk_sthudnametags.hpp"));
+	[] spawn { sleep 1; hint parseText format["<t align='left'><t color='#ff0000'>WARNING</t><br />BTK STHUD Name Tags userconfig is missing!<br />Using default settings...</t>"]; };
+};
 
 
 // Exit if already initialized or disabled
-if (!(isNil "btk_sthudtags_init") || !(btk_sthudtags_enabled)) exitWith {};
+if (!(isNil "btk_sthudnametags_init") || !(btk_sthudnametags_enabled)) exitWith {};
+
+
+// Init flag
+btk_sthudnametags_init = true;
 
 
 // Note
 player createDiarySubject ["BTK", "BTK"];
-player createDiaryRecord ["BTK", ["BTK STHUD Tags", format["<br /><font color='%2'>BTK STHUD Tags</font><br /><br /><font color='%2'>Version:</font> 1.0.0<br /><font color='%2'>Author:</font> sxp2high (BTK) (btk@arma3.cc)<br /><font color='%2'>Source:</font> https://github.com/sxp2high/BTK-STHUD-Tags<br /><br /><font color='%2'>Description</font><br />Unit nametags for the ShackTac Fireteam HUD (STHUD).", ([(profileNamespace getVariable ["GUI_BCG_RGB_R", 0.3843]), (profileNamespace getVariable ["GUI_BCG_RGB_G", 0.7019]), (profileNamespace getVariable ["GUI_BCG_RGB_B", 0.8862]), (profileNamespace getVariable ["GUI_BCG_RGB_A", 0.7])] call BIS_fnc_colorRGBAtoHTML), "#c9cacc"]]];
+player createDiaryRecord ["BTK", ["BTK STHUD Name Tags", format["<br /><font color='%2'>Addon:</font> BTK STHUD Name Tags<br /><font color='%2'>Version:</font> 1.0.0<br /><font color='%2'>Author:</font> sxp2high (BTK) (btk@arma3.cc)<br /><br /><font color='%2'>Readme, Changelog, License</font> <br />https://github.com/sxp2high/BTK-STHUD-Name-Tags<br /><br /><font color='%2'>Key bindings</font><br />None", ([(profileNamespace getVariable ["GUI_BCG_RGB_R", 0.3843]), (profileNamespace getVariable ["GUI_BCG_RGB_G", 0.7019]), (profileNamespace getVariable ["GUI_BCG_RGB_B", 0.8862]), (profileNamespace getVariable ["GUI_BCG_RGB_A", 0.7])] call BIS_fnc_colorRGBAtoHTML), "#c9cacc"]]];
+
+
+// Register layer
+btk_sthudnametags_rsc_layer = ["btk_sthudnametags_rsc_layer_1"] call BIS_fnc_rscLayer;
 
 
 // Main flow
 [] spawn {
 
-	// Register layer
-	btk_sthudtags_rsc_layer = ["btk_sthudtags_rsc_layer_1"] call BIS_fnc_rscLayer;
-
 	// Wait until ingame
 	waituntil {!(isNull (finddisplay 46))};
-	sleep 0.1;
+	sleep 1;
 
 	// Main loop
 	while {true} do {
@@ -55,10 +63,10 @@ player createDiaryRecord ["BTK", ["BTK STHUD Tags", format["<br /><font color='%
 		_name = if (alive _unit) then { (name _unit); } else { "Unknown"; };
 
 		// Check for crew
-		_show = if ((_vehicle == cursorTarget) && ((player distance _vehicle) < btk_sthudtags_distance) && ((_vehicle isKindOf "Man") || ((count (crew (_vehicle))) > 0)) && ((_vehicle isKindOf "Man") || (_unit in _vehicle)) && (alive player) && (alive cursorTarget) && ((side _unit) == (side player))) then { true; } else { false; };
+		_show = if ((_vehicle == cursorTarget) && ((player distance _vehicle) < btk_sthudnametags_distance) && ((_vehicle isKindOf "Man") || ((count (crew (_vehicle))) > 0)) && ((_vehicle isKindOf "Man") || (_unit in _vehicle)) && (alive player) && (alive cursorTarget) && ((side _unit) == (side player))) then { true; } else { false; };
 
 		// Checks while looking at it
-		while {(_vehicle == cursorTarget) && ((player distance _vehicle) < btk_sthudtags_distance) && ((_vehicle isKindOf "Man") || ((count (crew (_vehicle))) > 0)) && ((_vehicle isKindOf "Man") || (_unit in _vehicle)) && (alive player) && (alive cursorTarget) && ((group _unit) == (group player))} do {
+		while {(_vehicle == cursorTarget) && ((player distance _vehicle) < btk_sthudnametags_distance) && ((_vehicle isKindOf "Man") || ((count (crew (_vehicle))) > 0)) && ((_vehicle isKindOf "Man") || (_unit in _vehicle)) && (alive player) && (alive cursorTarget) && ((group _unit) == (group player))} do {
 
 			_playerPos = getPosATL player;
 			_vehiclePos = getPosATL _vehicle;
@@ -71,7 +79,7 @@ player createDiaryRecord ["BTK", ["BTK STHUD Tags", format["<br /><font color='%
 			};
 
 			// Show text
-			[_name, _color] spawn BTK_sthudtags_fnc_showText;
+			[_name, _color] spawn btk_sthudnametags_fnc_showText;
 
 			sleep 0.1; // Loop while looking at it
 
@@ -79,7 +87,7 @@ player createDiaryRecord ["BTK", ["BTK STHUD Tags", format["<br /><font color='%
 
 		// Cut out
 		if (_show) then {
-			btk_sthudtags_rsc_layer cutText ["", "PLAIN", 0.1];
+			btk_sthudnametags_rsc_layer cutText ["", "PLAIN", 0.1];
 		};
 
 		sleep 0.13; // Wait
@@ -89,5 +97,4 @@ player createDiaryRecord ["BTK", ["BTK STHUD Tags", format["<br /><font color='%
 };
 
 
-// All done
-btk_sthudtags_init = true;
+true

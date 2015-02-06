@@ -5,4 +5,8 @@ BTK STHUD Tags
 
 
 ### Description ###
-Unit nametags for the ShackTac Fireteam HUD (STHUD).
+Unit name tags for the ShackTac Fireteam HUD (STHUD).
+
+
+### Controls ###
+None

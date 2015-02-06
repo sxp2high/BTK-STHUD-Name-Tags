@@ -13,7 +13,7 @@
 	NIL
 
 	Syntax:
-	["Name", "#ffffff"] call BTK_sthudtags_fnc_showText;
+	["Name", "#ffffff"] call btk_sthudnametags_fnc_showText;
 */
 
 
@@ -30,15 +30,15 @@ _color = _this select 1;
 
 
 // Variables
-_text = format["<t align='center' size='%2'><t color='%3'><t shadow='1'>%1</t></t></t>", _name, btk_sthudtags_font_size, _color];
+_text = format["<t align='center' size='%2'><t color='%3'><t shadow='1'>%1</t></t></t>", _name, btk_sthudnametags_font_size, _color];
 _x = -1;
-_y = btk_sthudtags_position_y;
+_y = btk_sthudnametags_position_y;
 _w = -1;
 _h = -1;
 _delay = 0.1;
 _fade = 0;
 _moveY = 0;
-_layer = btk_sthudtags_rsc_layer;
+_layer = btk_sthudnametags_rsc_layer;
 
 
 // Width
@@ -105,7 +105,7 @@ if (_moveY != 0) then {
 
 
 // Thread
-_spawn = missionNamespace getVariable format["btk_sthudtags_spawn_%1", _layer];
+_spawn = missionNamespace getVariable format["btk_sthudnametags_spawn_%1", _layer];
 if (!(isNil "_spawn")) then  { terminate _spawn; };
 
 
@@ -137,7 +137,7 @@ _spawn = [_control,_delay,_fade,_moveY,_layer] spawn {
 
 
 // Set variable
-missionNamespace setVariable [format["btk_sthudtags_spawn_%1", _layer], _spawn];
+missionNamespace setVariable [format["btk_sthudnametags_spawn_%1", _layer], _spawn];
 
 
 // Done
